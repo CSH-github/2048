@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link href="http://cdn.bootcss.com/bootstrap/3.2.0/css/bootstrap.min.css" rel="stylesheet">
+    <title>game 2048</title>
+    <style>
+        #container {
+            width: 480px;
+            height: 480px;
+            border-radius: 10px;
+            margin: 0 auto;
+            background-color: #ede4e7;
+            position: relative;
+        }
+
+        .block, .cell {
+            width: 100px;
+            height: 100px;
+            border-radius: 6px;
+        }
+
+        .block {
+            background-color: #c6c6cc;
+            margin: 16px 0 0 16px;
+            float: left;
+        }
+
+        .cell {
+            position: absolute;
+            text-align: center;
+            line-height: 100px;
+            font-size: 60px;
+        }
+
+        #c00, #c01, #c02, #c03 {
+            top: 16px;
+        }
+
+        #c10, #c11, #c12, #c13 {
+            top: 132px;
+        }
+
+        #c20, #c21, #c22, #c23 {
+            top: 248px;
+        }
+
+        #c30, #c31, #c32, #c33 {
+            top: 364px;
+        }
+
+        #c00, #c10, #c20, #c30 {
+            left: 16px;
+        }
+
+        #c01, #c11, #c21, #c31 {
+            left: 132px;
+        }
+
+        #c02, #c12, #c22, #c32 {
+            left: 248px;
+        }
+
+        #c03, #c13, #c23, #c33 {
+            left: 364px;
+        }
+
+        .n2 {
+            background-color: #e2e8ff;
+        }
+
+        .n4 {
+            background-color: #f0d4e9;
+        }
+
+        .n8 {
+            background-color: #e3b1df;
+            color: #fff;
+        }
+
+        .n16 {
+            background-color: #f58ca7;
+            color: #fff;
+        }
+
+        .n32 {
+            background-color: #f57990;
+            color: #fff;
+        }
+
+        .n64 {
+            background-color: #f87843;
+            color: #fff;
+        }
+
+        .n128 {
+            background-color: #f84219;
+            color: #fff;
+        }
+
+        .n256 {
+            background-color: #f0010f;
+            color: #fff;
+        }
+
+        .n512 {
+            background-color: #9c0;
+            color: #fff;
+        }
+
+        .n1024 {
+            background-color: #33b5e5;
+            font-size: 40px;
+            color: #fff;
+        }
+
+        .n2048 {
+            background-color: #09c;
+            font-size: 40px;
+            color: #fff;
+        }
+
+        .n4096 {
+            background-color: #a6c;
+            font-size: 40px;
+            color: #fff;
+        }
+
+        .n8192 {
+            background-color: #93c;
+            font-size: 40px;
+            color: #fff;
+        }
+
+        p {
+            width: 480px;
+            margin: 0 auto;
+            text-align: center;
+            font-weight: bold;
+            font-size: 40px;
+            padding-top: 15px;
+        }
+
+        #gameOver {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+        }
+
+        #gameOver > div {
+            width: 100%;
+            height: 100%;
+            background-color: #505155;
+            opacity: .5;
+        }
+
+        #gameOver > p {
+            width: 300px;
+            height: 200px;
+            border: 1px solid #edc2b4;
+            line-height: 1.6em;
+            text-align: center;
+            background-color: #fff;
+            border-radius: 10px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-top: -135px;
+            margin-left: -150px;
+        }
+
+        .button {
+            padding: 10px;
+            border-radius: 6px;
+            background-color: #f57990;
+            color: #fff;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body style="background-color: #a4b4c0">
+<div class="lead" style="text-align: center"><h3><strong>Maded By Alex</strong></h3></div>
+<p>Score:<span id="score"></span></p>
+<div id="container">
+    <div id="g00" class="block"></div>
+    <div id="g01" class="block"></div>
+    <div id="g02" class="block"></div>
+    <div id="g03" class="block"></div>
+    <div id="g10" class="block"></div>
+    <div id="g11" class="block"></div>
+    <div id="g12" class="block"></div>
+    <div id="g13" class="block"></div>
+    <div id="g20" class="block"></div>
+    <div id="g21" class="block"></div>
+    <div id="g22" class="block"></div>
+    <div id="g23" class="block"></div>
+    <div id="g30" class="block"></div>
+    <div id="g31" class="block"></div>
+    <div id="g32" class="block"></div>
+    <div id="g33" class="block"></div>
+
+    <div id="c00" class="cell"></div>
+    <div id="c01" class="cell"></div>
+    <div id="c02" class="cell"></div>
+    <div id="c03" class="cell"></div>
+    <div id="c10" class="cell"></div>
+    <div id="c11" class="cell"></div>
+    <div id="c12" class="cell"></div>
+    <div id="c13" class="cell"></div>
+    <div id="c20" class="cell"></div>
+    <div id="c21" class="cell"></div>
+    <div id="c22" class="cell"></div>
+    <div id="c23" class="cell"></div>
+    <div id="c30" class="cell"></div>
+    <div id="c31" class="cell"></div>
+    <div id="c32" class="cell"></div>
+    <div id="c33" class="cell"></div>
+</div>
+<div id="gameOver">
+    <p>
+        Game Over!<br>
+        Score:<span id="finalScore"></span><br>
+        <a class="button" onclick="game.start()" style="text-decoration: none">Try again!</a>
+    </p>
+</div>
+<script>
+    var game = {
+        data: [],
+        rn: 4,
+        cn: 4,
+        state: 0,
+        RUNNING: 1,
+        GAMEOVER: 0,
+        score: 0,
+        start: function () {
+            this.state = this.RUNNING;
+            var block = document.getElementById("gameOver");
+            block.style.display = "none";
+            this.data = [
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0],
+                [0, 0, 0, 0]
+            ];
+            this.score = 0;
+            this.randomNum();
+            this.randomNum();
+            this.updateView();
+        },
+        isGameOver: function () {
+            if (!this.isFull()) {
+                return false;
+            } else {
+                for (var row = 0; row < this.rn; row++) {
+                    for (var col = 0; col < this.cn; col++) {
+                        if (col < this.cn - 1) {
+                            if (this.data[row][col] ==
+                                    this.data[row][col + 1]) {
+                                return false;
+                            }
+                        }
+                        if (row < this.rn - 1) {
+                            if (this.data[row][col] ==
+                                    this.data[row + 1][col]) {
+                                return false;
+                            }
+                        }
+                    }
+                }
+                return true;
+            }
+        },
+        isFull: function () {
+            for (var row = 0; row < this.rn; row++) {
+                for (var col = 0; col < this.cn; col++) {
+                    if (this.data[row][col] == 0)
+                        return false;
+                }
+            }
+            return true;
+        },
+        randomNum: function () {
+            if (!this.isFull()) {
+                while (true) {
+                    var col = parseInt(Math.random() * this.cn);
+                    var row = parseInt(Math.random() * this.rn);
+                    if (this.data[row][col] == 0) {
+                        this.data[row][col] =
+                                Math.random() < 0.5 ? 2 : 4;
+                        break;
+                    }
+                }
+            }
+        },
+        updateView: function () {
+            for (var row = 0; row < this.rn; row++) {
+                for (var col = 0; col < this.cn; col++) {
+                    var block = document.getElementById("c" + row + col);
+                    var num = this.data[row][col];
+                    block.innerHTML = num != 0 ? num : "";
+                    block.className = num != 0 ? "cell n" + num : "cell";
+                }
+            }
+            var score = document.getElementById("score");
+            score.innerHTML = this.score;
+            if (this.isGameOver()) {
+                this.state = this.GAMEOVER;
+                var block1 = document.getElementById("gameOver");
+                var finalScore = document.getElementById("finalScore");
+                block1.style.display = "block";
+                finalScore.innerHTML = this.score;
+            }
+        },
+        getUpNext: function (row, col) {
+            for (var next = row - 1; next >= 0; next--) {
+                if (this.data[next][col] != 0) {
+                    return next;
+                }
+            }
+            return -1;
+        },
+        getDownNext: function (row, col) {
+            for (var next = row + 1; next < this.rn; next++) {
+                if (this.data[next][col] != 0) {
+                    return next;
+                }
+            }
+            return -1;
+        },
+        getRightNext: function (row, col) {
+            for (var next = col + 1; next < this.cn; next++) {
+                if (this.data[row][next] != 0) {
+                    return next;
+                }
+            }
+            return -1;
+        },
+        getLeftNext: function (row, col) {
+            for (var next = col - 1; next >= 0; next--) {
+                if (this.data[row][next] != 0) {
+                    return next;
+                }
+            }
+            return -1;
+        },
+        moveRightInRow: function (row) {
+            for (var col = this.cn - 1; col > 0; col--) {
+                var next = this.getLeftNext(row, col);
+                if (next == -1) {
+                    break;
+                } else {
+                    if (this.data[row][col] == 0) {
+                        this.data[row][col] =
+                                this.data[row][next];
+                        this.data[row][next] = 0;
+                        col++;
+                    } else if (this.data[row][col] ==
+                            this.data[row][next]) {
+                        this.data[row][col] *= 2;
+                        this.data[row][next] = 0;
+                        this.score += this.data[row][col];
+                    }
+                }
+            }
+        },
+        moveLeftInRow: function (row) {
+            for (var col = 0; col < this.cn - 1; col++) {
+                var next = this.getRightNext(row, col);
+                if (next == -1) {
+                    break;
+                } else {
+                    if (this.data[row][col] == 0) {
+                        this.data[row][col] =
+                                this.data[row][next];
+                        this.data[row][next] = 0;
+                        col--;
+                    } else if (this.data[row][col] ==
+                            this.data[row][next]) {
+                        this.data[row][col] *= 2;
+                        this.data[row][next] = 0;
+                        this.score += this.data[row][col];
+                    }
+                }
+            }
+        },
+        moveUpInCol: function (col) {
+            for (var row = 0; row < this.rn - 1; row++) {
+                var next = this.getDownNext(row, col);
+                if (next == -1) {
+                    break;
+                } else {
+                    if (this.data[row][col] == 0) {
+                        this.data[row][col] =
+                                this.data[next][col];
+                        this.data[next][col] = 0;
+                        row--;
+                    } else if (this.data[row][col] ==
+                            this.data[next][col]) {
+                        this.data[row][col] *= 2;
+                        this.data[next][col] = 0;
+                        this.score += this.data[row][col];
+                    }
+                }
+            }
+        },
+        moveDownInCol: function (col) {
+            for (var row = this.cn - 1; row > 0; row--) {
+                var next = this.getUpNext(row, col);
+                if (next == -1) {
+                    break;
+                } else {
+                    if (this.data[row][col] == 0) {
+                        this.data[row][col] =
+                                this.data[next][col];
+                        this.data[next][col] = 0;
+                        row++;
+                    } else if (this.data[row][col] ==
+                            this.data[next][col]) {
+                        this.data[row][col] *= 2;
+                        this.data[next][col] = 0;
+                        this.score += this.data[row][col];
+                    }
+                }
+            }
+        },
+        moveLeft: function () {
+            var oldType = this.data.toString();
+            for (var row = 0; row < this.rn; row++) {
+                this.moveLeftInRow(row);
+            }
+            var newType = this.data.toString();
+            if (oldType != newType) {
+                this.randomNum();
+                this.updateView();
+            }
+        },
+        moveRight: function () {
+            var oldType = this.data.toString();
+            for (var row = 0; row < this.rn; row++) {
+                this.moveRightInRow(row);
+            }
+            var newType = this.data.toString();
+            if (oldType != newType) {
+                this.randomNum();
+                this.updateView();
+            }
+        },
+        moveUp: function () {
+            var oldType = this.data.toString();
+            for (var col = 0; col < this.rn; col++) {
+                this.moveUpInCol(col);
+            }
+            var newType = this.data.toString();
+            if (oldType != newType) {
+                this.randomNum();
+                this.updateView();
+            }
+        },
+        moveDown: function () {
+            var oldType = this.data.toString();
+            for (var col = 0; col < this.rn; col++) {
+                this.moveDownInCol(col);
+            }
+            var newType = this.data.toString();
+            if (oldType != newType) {
+                this.randomNum();
+                this.updateView();
+            }
+        }
+    };
+    window.onload = function () {
+        game.start();
+        document.onkeydown = function () {
+            if (game.state == game.RUNNING) {
+                var event = window.event || arguments[0];
+                if (event.keyCode == 37) {
+                    game.moveLeft();
+                } else if (event.keyCode == 38) {
+                    game.moveUp();
+                } else if (event.keyCode == 39) {
+                    game.moveRight();
+                } else if (event.keyCode == 40) {
+                    game.moveDown();
+                }
+            }
+        }
+    }
+</script>
+</body>
+</html>
